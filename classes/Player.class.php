@@ -5,11 +5,12 @@ class Player {
 	private $pid;
 	private $times = null;
 
-	const CLASS_NAME = "Player";
-
-	public function __construct($uid, $name) {
+	public function __construct($uid, $name, $pid=false) {
 		$this->uid = $uid;
 		$this->name = $name;
+		if ($pid) {
+			$this->pid = $pid;
+		}
 	}
 
 	/**
@@ -26,8 +27,7 @@ class Player {
 						ORDER BY `name`";
 		$res = DB::get()->query($sql, $uid);
 		while ($p = $res->fetch_object()) {
-			$player = new Player($p->uid, $p->name);
-			$player->setPid($p->pid);
+			$player = new Player($p->uid, $p->name, $p->pid);
 			$players[] = $player;
 		}
 
@@ -35,15 +35,19 @@ class Player {
 	}
 
 	public function save() {
+		$sql = "INSERT INTO `players`
+						SET `name`=%s,
+								`uid`=%d";
+		if (!DB::get()->query($sql, $this->name, $this->uid)) {
+			return false;
+		}
 
+		$this->pid = DB::get()->lastId();
+		return true;
 	}
 
 	public function getName() {
 		return $this->name;
-	}
-
-	public function setPid($pid) {
-		$this->pid = $pid;
 	}
 
 	public function getPid() {

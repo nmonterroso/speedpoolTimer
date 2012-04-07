@@ -3,8 +3,6 @@ class User {
 	private $uid;
 	private $name;
 
-	const CLASS_NAME = "User";
-
 	public function __construct($uid, $name) {
 		$this->uid = $uid;
 		$this->name = $name;

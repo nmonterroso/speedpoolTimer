@@ -43,6 +43,10 @@ class DB {
 		return $this->db->query($sql);
 	}
 
+	public function lastId() {
+		return $this->db->insert_id;
+	}
+
 	private function getNextPlaceholder($sql) {
 		$nextPlaceholder = strpos($sql, "%");
 		if ($nextPlaceholder === false) {

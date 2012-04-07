@@ -22,11 +22,17 @@ class LoginManager {
 		$_SESSION['user'] = $user;
 	}
 
+	/**
+	 * @static
+	 * @return User
+	 */
 	public static function enforceLogin() {
 		if (!self::getUser()) {
 			header("Location: /login.php");
 			exit();
 		}
+
+		return self::getUser();
 	}
 
 	public static function enforceAnonymous() {

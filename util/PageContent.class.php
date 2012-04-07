@@ -14,25 +14,46 @@ class PageContent {
 		return $output;
 	}
 
-	public static function addJs($js) {
-		if (!isset($_GLOBALS['jsIncludes'])) {
-			$_GLOBALS['jsIncludes'] = array();
-		}
-
-		$_GLOBALS['jsIncludes'][] = $js;
+	public static function ajax(array $data=array(), $error=false) {
+		exit(json_encode(array_merge(array(
+			"error"	=> $error,
+		), $data)));
 	}
 
-	public static function addCss($css) {
-		if (!isset($_GLOBALS['cssIncludes'])) {
-			$_GLOBALS['cssIncludes'] = array();
+	public static function ajaxError($message) {
+		self::ajax(array(
+			"message"	=> $message,
+		), true);
+	}
+
+	public static function addStatic($name) {
+		self::addCss($name);
+		self::addJs($name);
+	}
+
+	public static function addJs($js=null) {
+		static $includes = array();
+
+		if ($js !== null) {
+			$includes[] = "{$js}.js";
 		}
 
-		$_GLOBALS['cssIncludes'][] = $css;
+		return $includes;
+	}
+
+	public static function addCss($css=null) {
+		static $includes = array();
+
+		if ($css !== null) {
+			$includes[] = "{$css}.css";
+		}
+
+		return $includes;
 	}
 
 	public static function getJs($script) {
 		$jsFile = substr(preg_replace('/\.php$/', '.js', $script), 1);
-		$jsIncludes = isset($_GLOBALS['jsIncludes']) ? $_GLOBALS['jsIncludes'] : array();
+		$jsIncludes = self::addJs();
 		if (file_exists(dirname(__FILE__)."/../public/js/".$jsFile)) {
 			$jsIncludes[] = $jsFile;
 		}
@@ -47,14 +68,14 @@ class PageContent {
 
 	public static function getCss($script) {
 		$cssFile = substr(preg_replace('/\.php$/', '.css', $script), 1);
-		$cssIncludes = isset($_GLOBALS['cssIncludes']) ? $_GLOBALS['cssIncludes'] : array();
+		$cssIncludes = self::addCss();
 		if (file_exists(dirname(__FILE__)."/../public/css/".$cssFile)) {
 			$cssIncludes[] = $cssFile;
 		}
 
 		$cssIncludeHtml = "";
 		foreach ($cssIncludes as $js) {
-			$cssIncludeHtml .= "<script type='text/javascript' src='/js/{$js}'></script>";
+			$cssIncludeHtml .= "<link rel='stylesheet' href='/css/{$js}'></script>";
 		}
 
 		return $cssIncludeHtml;

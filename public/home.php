@@ -1,20 +1,37 @@
 <?php
-LoginManager::enforceLogin();
+$user = LoginManager::enforceLogin();
+PageContent::addStatic("timer");
 
-$players = Player::getPlayers(LoginManager::getUser()->getUid());
-$emptyList = empty($players);
 $options = "
-	<option>Select Player</option>
+	<option value='-1' data-placeholder='true'>Select Player</option>
 	<option value='0'>Create New</option>
 ";
 
-foreach ($players as $player) {
+$players = "<div class='hidden'>";
+foreach (Player::getPlayers($user->getUid()) as $player) {
 	/** @var $player Player */
-	$options .= "<option value='".$player->getPid()."'>".$player->getName()."</option>";
+	$players .= "
+		<div class='player'>
+			<span class='id'>".$player->getPid()."</span>
+			<span class='name'>".$player->getName()."</span>
+		</div>
+	";
 }
+$players .= "</div>";
 
 echo "
 	<select id='playerSelect'>
 		$options
 	</select>
+	$players
+	<div id='play'>
+		<div id='timerContainer'>
+			<div id='timer'>00:00.000</div>
+		</div>
+		<fieldset class='ui-grid-a'>
+			<div class='ui-block-a'><button data-mini='true' id='timerReset'>Reset</button></div>
+			<div class='ui-block-b'><button data-mini='true' id='timerPenalty'>Penalty</button></div>
+		</fieldset>
+		<button data-mini='true' id='timerToggle'>Start</button>
+	</div>
 ";

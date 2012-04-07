@@ -31,6 +31,7 @@ echo "
     <script type='text/javascript' src='/js/mobileinit.js'></script>
     <script type='text/javascript' src='http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js'></script>
     <script type='text/javascript' src='/js/simpledialog2.js'></script>
+    <script type='text/javascript' src='/js/utility.js'></script>
     {$jsInclude}
 </head>
 <body>
