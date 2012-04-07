@@ -1,4 +1,5 @@
 var utilities = {
+	"player": null,
 	"resetSelect": function(selectMenu, defaultValue) {
 		defaultValue = defaultValue || -1;
 		selectMenu

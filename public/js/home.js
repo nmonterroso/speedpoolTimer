@@ -11,7 +11,6 @@ $('#page').live('pageinit', function() {
 				"mode": "button",
 				"headerText": "New Player",
 				"headerClose": false,
-				"buttonPrompt": "Name",
 				"buttonInput": true,
 				"buttons": {
 					"Add": {
@@ -34,6 +33,10 @@ $('#page').live('pageinit', function() {
 				}
 			});
 		} else {
+			utilities.player = {
+				"pid": val,
+				"name": $(this).find("option:selected").text()
+			};
 			showPlayer();
 		}
 	});

@@ -18,7 +18,6 @@ foreach (Player::getPlayers($user->getUid()) as $player) {
 	";
 }
 $players .= "</div>";
-
 echo "
 	<select id='playerSelect'>
 		$options

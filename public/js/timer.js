@@ -62,6 +62,7 @@ $('#page').live('pageinit', function() {
 		toggle
 			.text("Start")
 			.button("refresh", true);
+		promptSave();
 	};
 
 	var getRuntime = function() {
@@ -88,5 +89,37 @@ $('#page').live('pageinit', function() {
 
 		var display = minutesDisplay+":"+secondsDisplay+"."+msDisplay;
 		timerDisplay.html(display);
-	}
+	};
+
+	var promptSave = function() {
+		var player = utilities.player;
+		if (player == null) {
+			return;
+		}
+
+		$("<div>").simpledialog2({
+			"mode": "button",
+			"headerText": "Save?",
+			"buttonPrompt": "Save time "+timerDisplay.html()+" for "+player.name+"?",
+			"buttons": {
+				"Yes": {
+					"click": function() {
+						save(player);
+						close();
+					}
+				},
+				"No": {
+					"click": function() {
+						close();
+					},
+					"icon": "delete",
+					"theme": "c"
+				}
+			}
+		});
+	};
+
+	var save = function(player) {
+
+	};
 });
