@@ -33,10 +33,7 @@ $('#page').live('pageinit', function() {
 				}
 			});
 		} else {
-			utilities.player = {
-				"pid": val,
-				"name": $(this).find("option:selected").text()
-			};
+			utilities.setPlayer(val, $(this).find("option:selected").text());
 			showPlayer();
 		}
 	});
@@ -75,7 +72,7 @@ $('#page').live('pageinit', function() {
 				};
 
 				players.push(player);
-				utilities.player = player;
+				utilities.setPlayer(player.pid, player.name);
 				refreshPlayerList(json.pid);
 			}
 		});

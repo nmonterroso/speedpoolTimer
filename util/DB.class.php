@@ -81,10 +81,6 @@ class DB {
 				break;
 		}
 
-		if ($type == self::TYPE_INVALID) {
-			return false;
-		}
-
 		return $type;
 	}
 

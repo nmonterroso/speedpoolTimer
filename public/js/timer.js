@@ -4,6 +4,7 @@ $('#page').live('pageinit', function() {
 	var MS_TO_MINUTES = 0.000016666666666666667;
 	var MINUTES_TO_MS = 60000;
 	var SECONDS_TO_MS = 1000;
+	var FADE_TIME = 200;
 
 	var state = STATE_STOPPED;
 	var interval;
@@ -12,6 +13,7 @@ $('#page').live('pageinit', function() {
 	var toggle = $("#timerToggle");
 	var reset = $("#timerReset");
 	var penalty = $("#timerPenalty");
+	var penaltiesContainer = $("#penaltyContainer");
 	var penaltyTime = 10;
 	var penalties = [];
 	var timerDisplay = $("#timer");
@@ -23,6 +25,7 @@ $('#page').live('pageinit', function() {
 				break;
 			case STATE_STARTED:
 				stopTimer();
+				promptSave();
 				break;
 		}
 	});
@@ -32,7 +35,7 @@ $('#page').live('pageinit', function() {
 		currentRunTime = 0;
 		timerDisplay.html("00:00.000");
 		state = STATE_STOPPED;
-		penalties = [];
+		resetPenalties();
 	});
 
 	penalty.click(function() {
@@ -40,13 +43,33 @@ $('#page').live('pageinit', function() {
 			return;
 		}
 
-		penalties.push({
+		addPenalty({
 			"time": getRuntime(),
 			"penaltyAmount": penaltyTime
 		});
 
 		timer.setTime(timer.getTime() - penaltyTime*SECONDS_TO_MS);
 	});
+
+	var addPenalty = function(penalty) {
+		penalties.push(penalty);
+
+		var display = getDisplay(penalty.time);
+		penaltiesContainer.append("<tr><td>"+display+"</td><td>"+penalty.penaltyAmount+"</td></tr>");
+		if (!penaltiesContainer.is(":visible")) {
+			penaltiesContainer.fadeIn(FADE_TIME);
+		}
+	};
+
+	var resetPenalties = function() {
+		penalties = [];
+
+		if (penaltiesContainer.is(":visible")) {
+			penaltiesContainer.fadeOut(FADE_TIME, function() {
+				penaltiesContainer.find("tr:gt(0)").remove();
+			});
+		}
+	};
 
 	var startTimer = function() {
 		timer = new Date();
@@ -65,18 +88,25 @@ $('#page').live('pageinit', function() {
 		toggle
 			.text("Start")
 			.button("refresh", true);
-		promptSave();
 	};
 
 	var getRuntime = function() {
+		if (timer == null) {
+			return 0;
+		}
+
 		return new Date().getTime() - timer.getTime();
 	};
 
 	var refreshTimerDisplay = function() {
 		currentRunTime = getRuntime();
-		var minutes = Math.floor(currentRunTime*MS_TO_MINUTES);
-		var seconds = Math.floor((currentRunTime - minutes*MINUTES_TO_MS) / 1000);
-		var ms = currentRunTime - minutes*MINUTES_TO_MS - seconds*SECONDS_TO_MS;
+		timerDisplay.html(getDisplay(currentRunTime));
+	};
+
+	var getDisplay = function(time) {
+		var minutes = Math.floor(time*MS_TO_MINUTES);
+		var seconds = Math.floor((time - minutes*MINUTES_TO_MS) / 1000);
+		var ms = time - minutes*MINUTES_TO_MS - seconds*SECONDS_TO_MS;
 
 		var minutesDisplay = minutes < 10 ? "0"+String(minutes) : String(minutes);
 		var secondsDisplay = seconds < 10 ? "0"+String(seconds) : String(seconds);
@@ -90,9 +120,8 @@ $('#page').live('pageinit', function() {
 			msDisplay = String(ms);
 		}
 
-		var display = minutesDisplay+":"+secondsDisplay+"."+msDisplay;
-		timerDisplay.html(display);
-	};
+		return minutesDisplay+":"+secondsDisplay+"."+msDisplay;
+	}
 
 	var promptSave = function() {
 		var player = utilities.player;
@@ -146,4 +175,8 @@ $('#page').live('pageinit', function() {
 			}
 		});
 	};
+
+	utilities.subscribe(utilities.events.PLAYER_CHANGED, function(player) {
+		reset.click();
+	});
 });

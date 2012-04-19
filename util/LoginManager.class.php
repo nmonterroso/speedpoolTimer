@@ -26,9 +26,9 @@ class LoginManager {
 	 * @static
 	 * @return User
 	 */
-	public static function enforceLogin() {
+	public static function enforceLogin($loginPage="login.php") {
 		if (!self::getUser()) {
-			header("Location: /login.php");
+			header("Location: /{$loginPage}");
 			exit();
 		}
 

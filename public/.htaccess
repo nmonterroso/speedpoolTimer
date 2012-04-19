@@ -1,4 +1,5 @@
 RewriteEngine On
 RewriteBase /
 RewriteRule ^ajax/(.+)\.php$ - [L]
+RewriteRule ^graphs/(.+)\.php$ - [L]
 RewriteRule ^(.+)\.php$ index.php [L]

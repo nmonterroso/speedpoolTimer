@@ -32,5 +32,11 @@ echo "
 			<div class='ui-block-b'><button data-mini='true' id='timerPenalty'>Penalty</button></div>
 		</fieldset>
 		<button data-mini='true' id='timerToggle'>Start</button>
+		<table class='hidden' id='penaltyContainer'>
+			<tr>
+				<th>When</th>
+				<th>Amount</th>
+			</tr>
+		</table>
 	</div>
 ";
