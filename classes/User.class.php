@@ -28,11 +28,11 @@ class User {
 		return null;
 	}
 
-	public function getName() {
+	public function name() {
 		return $this->name;
 	}
 
-	public function getUid() {
+	public function uid() {
 		return $this->uid;
 	}
 }

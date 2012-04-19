@@ -8,12 +8,12 @@ $options = "
 ";
 
 $players = "<div class='hidden'>";
-foreach (Player::getPlayers($user->getUid()) as $player) {
+foreach (Player::getPlayers($user->uid()) as $player) {
 	/** @var $player Player */
 	$players .= "
 		<div class='player'>
-			<span class='id'>".$player->getPid()."</span>
-			<span class='name'>".$player->getName()."</span>
+			<span class='id'>".$player->pid()."</span>
+			<span class='name'>".$player->name()."</span>
 		</div>
 	";
 }

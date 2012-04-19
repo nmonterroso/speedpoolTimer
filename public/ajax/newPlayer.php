@@ -7,11 +7,11 @@ if (!$p['name']) {
 	PageContent::ajaxError("Missing Name");
 }
 
-$player = new Player($user->getUid(), $p['name']);
+$player = new Player($user->uid(), $p['name']);
 if (!$player->save()) {
 	PageContent::ajaxError("Couldn't save new player. Does that player already exist?");
 }
 
 PageContent::ajax(array(
-	"pid"	=> $player->getPid()
+	"pid"	=> $player->pid()
 ));

@@ -1,6 +1,6 @@
 <?php
 LoginManager::enforceAnonymous();
-$_GLOBALS['pageTitle'] = "Login";
+PageContent::header("Login");
 
 echo "
 <form method='post' action='/processLogin.php'>

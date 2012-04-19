@@ -23,5 +23,13 @@ var utilities = {
 				}
 			});
 		}, 1000);
+	},
+	"busy": function(message) {
+		$.mobile.showPageLoadingMsg({
+			"msgText": message
+		});
+	},
+	"unbusy": function() {
+		$.mobile.hidePageLoadingMsg();
 	}
 };

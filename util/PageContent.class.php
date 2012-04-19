@@ -80,4 +80,14 @@ class PageContent {
 
 		return $cssIncludeHtml;
 	}
+
+	public static function header($newHeader=null) {
+		static $header = "Speed Pool";
+
+		if ($newHeader !== null) {
+			$header = $newHeader;
+		}
+
+		return $header;
+	}
 }

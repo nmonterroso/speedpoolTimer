@@ -34,6 +34,25 @@ class Player {
 		return $players;
 	}
 
+	/**
+	 * @static
+	 * @param $pid
+	 * @return Player
+	 */
+	public static function get($pid) {
+		$player = null;
+
+		$sql = "SELECT `pid`, `name`, `uid`
+						FROM `players`
+						WHERE `pid`=%d";
+		$res = DB::get()->query($sql, $pid);
+		if ($p = $res->fetch_object()) {
+			$player = new Player($p->uid, $p->name, $p->pid);
+		}
+
+		return $player;
+	}
+
 	public function save() {
 		$sql = "INSERT INTO `players`
 						SET `name`=%s,
@@ -46,15 +65,15 @@ class Player {
 		return true;
 	}
 
-	public function getName() {
+	public function name() {
 		return $this->name;
 	}
 
-	public function getPid() {
+	public function pid() {
 		return $this->pid;
 	}
 
-	public function getTimes() {
+	public function times() {
 		if ($this->times == null) {
 
 		}
@@ -62,7 +81,7 @@ class Player {
 		return $this->times;
 	}
 
-	public function getUid() {
+	public function uid() {
 		return $this->uid;
 	}
 }

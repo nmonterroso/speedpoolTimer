@@ -47,6 +47,24 @@ class DB {
 		return $this->db->insert_id;
 	}
 
+	public function startTransaction() {
+		$this->db->autocommit(false);
+	}
+
+	private function endTransaction() {
+		$this->db->autocommit(true);
+	}
+
+	public function commit() {
+		$this->db->commit();
+		$this->endTransaction();
+	}
+
+	public function rollback() {
+		$this->db->rollback();
+		$this->endTransaction();
+	}
+
 	private function getNextPlaceholder($sql) {
 		$nextPlaceholder = strpos($sql, "%");
 		if ($nextPlaceholder === false) {

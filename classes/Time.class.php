@@ -1,24 +1,41 @@
 <?php
 class Time {
+	private $tid;
 	private $date;
 	private $time;
 	private $penalties;
+	private $player;
 
-	public function __construct($date, $time, $penalties) {
-		$this->date = $date;
+	public function __construct(Player $player, $time, array $penalties) {
+		$this->date = time();
+		$this->player = $player;
 		$this->time = $time;
-		$this->penalties = $penalties;
+
+		$this->penalties = array();
+		foreach ($penalties as $penalty) {
+			$this->penalties[] = new Penalty($penalty->time, $penalty->penaltyAmount);
+		}
 	}
 
-	public function getDate() {
-		return $this->date;
-	}
+	public function save() {
+		DB::get()->startTransaction();
 
-	public function getTime() {
-		return $this->time;
-	}
+		$sql = "INSERT INTO `times`
+						SET `pid`=%d, `date`=%d, `time`=%d";
+		if (!DB::get()->query($sql, $this->player->pid(), $this->date, $this->time)) {
+			return false;
+		}
 
-	public function getPenalties() {
-		return $this->penalties;
+		$this->tid = DB::get()->lastId();
+		foreach ($this->penalties as $penalty) {
+			/** @var $penalty Penalty */
+			if (!$penalty->save($this->tid)) {
+				DB::get()->rollback();
+				return false;
+			}
+		}
+
+		DB::get()->commit();
+		return true;
 	}
 }

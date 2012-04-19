@@ -7,14 +7,13 @@ $('#page').live('pageinit', function() {
 
 	var state = STATE_STOPPED;
 	var interval;
-	var startTime = 0;
 	var currentRunTime = 0;
 	var timer;
 	var toggle = $("#timerToggle");
 	var reset = $("#timerReset");
 	var penalty = $("#timerPenalty");
 	var penaltyTime = 10;
-	var penalties = 0;
+	var penalties = [];
 	var timerDisplay = $("#timer");
 
 	toggle.click(function() {
@@ -33,7 +32,7 @@ $('#page').live('pageinit', function() {
 		currentRunTime = 0;
 		timerDisplay.html("00:00.000");
 		state = STATE_STOPPED;
-		penalties = 0;
+		penalties = [];
 	});
 
 	penalty.click(function() {
@@ -41,7 +40,11 @@ $('#page').live('pageinit', function() {
 			return;
 		}
 
-		++penalties;
+		penalties.push({
+			"time": getRuntime(),
+			"penaltyAmount": penaltyTime
+		});
+
 		timer.setTime(timer.getTime() - penaltyTime*SECONDS_TO_MS);
 	});
 
@@ -104,7 +107,7 @@ $('#page').live('pageinit', function() {
 			"buttons": {
 				"Yes": {
 					"click": function() {
-						save(player);
+						save(player, currentRunTime, penalties);
 						close();
 					}
 				},
@@ -119,7 +122,28 @@ $('#page').live('pageinit', function() {
 		});
 	};
 
-	var save = function(player) {
+	var save = function(player, runtime, penalties) {
+		utilities.busy("saving");
 
+		$.ajax("/ajax/savePlayerTime.php", {
+			"type": "post",
+			"data": {
+				"data": JSON.stringify({
+					"player": player,
+					"time": runtime,
+					"penalties": penalties
+				})
+			},
+			"dataType": "json",
+			"success": function(json) {
+				if (json.error) {
+					utilities.error(json.message);
+					return;
+				}
+			},
+			"complete": function() {
+				utilities.unbusy();
+			}
+		});
 	};
 });
