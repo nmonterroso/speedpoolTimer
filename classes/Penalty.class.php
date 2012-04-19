@@ -13,4 +13,12 @@ class Penalty {
 						SET `tid`=%d, `time`=%d, `penaltyAmount`=%d";
 		return DB::get()->query($sql, $tid, $this->time, $this->penaltyAmount);
 	}
+
+	public function penaltyAmount() {
+		return $this->penaltyAmount;
+	}
+
+	public function time() {
+		return $this->time;
+	}
 }

@@ -38,4 +38,24 @@ class Time {
 		DB::get()->commit();
 		return true;
 	}
+
+	public function player() {
+		return $this->player;
+	}
+
+	public function time() {
+		return $this->time;
+	}
+
+	public function tid() {
+		return $this->tid;
+	}
+
+	public function penalties() {
+		return $this->penalties;
+	}
+
+	public function date() {
+		return $this->date;
+	}
 }
