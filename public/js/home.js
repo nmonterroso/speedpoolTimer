@@ -69,11 +69,13 @@ $('#page').live('pageinit', function() {
 					return;
 				}
 
-				players.push({
+				var player = {
 					"pid": json.pid,
 					"name": name
-				});
+				};
 
+				players.push(player);
+				utilities.player = player;
 				refreshPlayerList(json.pid);
 			}
 		});
