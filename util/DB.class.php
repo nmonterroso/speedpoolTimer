@@ -23,6 +23,10 @@ class DB {
 		$params = func_get_args();
 		array_shift($params);
 
+		if (is_array($params[0])) {
+			$params = $params[0];
+		}
+
 		while (count($params) > 0 && ($placeholder = $this->getNextPlaceholder($sql)) != self::TYPE_INVALID) {
 			$nextParam = array_shift($params);
 			switch ($placeholder) {

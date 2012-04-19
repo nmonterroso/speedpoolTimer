@@ -3,7 +3,6 @@ class Player {
 	private $name;
 	private $uid;
 	private $pid;
-	private $times = null;
 
 	public function __construct($uid, $name, $pid=false) {
 		$this->uid = $uid;
@@ -73,12 +72,37 @@ class Player {
 		return $this->pid;
 	}
 
-	public function times() {
-		if ($this->times == null) {
-
+	public function times($since=0, $until=0) { // maybe i should add some caching layer here
+		if ($until < $since) {
+			return array();
 		}
 
-		return $this->times;
+		$times = array();
+		$params = array($this->pid());
+		$sql = "SELECT `tid`, `date`, `time`
+						FROM `times`
+						WHERE `pid`=%d";
+		if ($since > 0) {
+			$sql .= " AND `date` > %d";
+			$params[] = $since;
+		}
+
+		if ($until > 0) {
+			$sql .= " AND `date` < %d";
+			$params[] = $until;
+		}
+
+		$sql .= " ORDER BY `date` ASC";
+
+		$res = DB::get()->query($sql, $params);
+		while ($t = $res->fetch_object()) {
+			$time = new Time($this, $t->time);
+			$time->tid($t->tid);
+			$time->date($t->date);
+			$times[] = $time;
+		}
+
+		return $times;
 	}
 
 	public function uid() {

@@ -6,14 +6,16 @@ class Time {
 	private $penalties;
 	private $player;
 
-	public function __construct(Player $player, $time, array $penalties) {
+	public function __construct(Player $player, $time, array $penalties=null) {
 		$this->date = time();
 		$this->player = $player;
 		$this->time = $time;
 
-		$this->penalties = array();
-		foreach ($penalties as $penalty) {
-			$this->penalties[] = new Penalty($penalty->time, $penalty->penaltyAmount);
+		if ($penalties != null) {
+			$this->penalties = array();
+			foreach ($penalties as $penalty) {
+				$this->penalties[] = new Penalty($penalty->time, $penalty->penaltyAmount);
+			}
 		}
 	}
 
@@ -47,15 +49,36 @@ class Time {
 		return $this->time;
 	}
 
-	public function tid() {
-		return $this->tid;
-	}
-
 	public function penalties() {
+		if ($this->penalties === null && $this->tid !== null) {
+			$this->penalties = array();
+			$sql = "SELECT `time`, `penaltyAmount`
+							FROM `penalties`
+							WHERE `tid`=%d
+							ORDER BY `time` ASC";
+			$res = DB::get()->query($sql, $this->tid);
+			while ($p = $res->fetch_object()) {
+				$penalty = new Penalty($p->time, $p->penaltyAmount);
+				$this->penalties[] = $penalty;
+			}
+		}
+
 		return $this->penalties;
 	}
 
-	public function date() {
+	public function date($date = null) {
+		if ($date !== null) {
+			$this->date = $date;
+		}
+
 		return $this->date;
+	}
+
+	public function tid($tid = null) {
+		if ($tid !== null) {
+			$this->tid = $tid;
+		}
+
+		return $this->tid;
 	}
 }

@@ -1,6 +1,5 @@
 $('#page').live('pageinit', function() {
 	var playerSelect = $("#playerSelect");
-	var players = [];
 
 	playerSelect.change(function() {
 		var val = $(this).val();
@@ -33,29 +32,14 @@ $('#page').live('pageinit', function() {
 				}
 			});
 		} else {
-			utilities.setPlayer(val, $(this).find("option:selected").text());
+			utilities.setPlayer(val);
 			showPlayer();
 		}
 	});
 
-	// get player list from DOM
-	var initPlayers = function() {
-		$(".player").each(function() {
-			var pid = $(this).find(".id").text();
-			var name = $(this).find(".name").text();
-
-			players.push({
-				"pid": pid,
-				"name": name
-			});
-		});
-
-		$(".player").remove();
-		refreshPlayerList();
-	};
-
 	var addNewPlayer = function(name) {
 		utilities.resetSelect(playerSelect);
+		utilities.busy("creating");
 		$.ajax("/ajax/newPlayer.php", {
 			"type": "post",
 			"data": {"name": name},
@@ -71,25 +55,21 @@ $('#page').live('pageinit', function() {
 					"name": name
 				};
 
-				players.push(player);
-				utilities.setPlayer(player.pid, player.name);
+				utilities.addPlayer(player.pid, player.name, true);
 				refreshPlayerList(json.pid);
+			},
+			"complete": function() {
+				utilities.unbusy();
 			}
 		});
 	};
 
 	var refreshPlayerList = function(selectPid) {
 		selectPid = selectPid || -1;
-		players.sort(function(p1, p2) {
-			var p1Name = p1.name.toLowerCase();
-			var p2Name = p2.name.toLowerCase();
-
-			return p1Name < p2Name ? -1 : p1Name > p2Name ? 1 : 0;
-		});
 
 		playerSelect.find("option:gt(1)").remove();
-		$.each(players, function(i, e) {
-			playerSelect.append("<option value='"+e.pid+"'>"+e.name+"</option>");
+		$.each(utilities.players(), function(i, player) {
+			playerSelect.append("<option value='"+player.pid+"'>"+player.name+"</option>");
 		});
 
 		utilities.resetSelect(playerSelect, selectPid);
@@ -106,5 +86,6 @@ $('#page').live('pageinit', function() {
 		$("#play").hide();
 	}
 
-	initPlayers();
+	utilities.initPlayers();
+	refreshPlayerList();
 });

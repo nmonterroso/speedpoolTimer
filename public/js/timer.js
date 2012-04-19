@@ -1,9 +1,6 @@
 $('#page').live('pageinit', function() {
 	var STATE_STOPPED = 0;
 	var STATE_STARTED = 1;
-	var MS_TO_MINUTES = 0.000016666666666666667;
-	var MINUTES_TO_MS = 60000;
-	var SECONDS_TO_MS = 1000;
 	var FADE_TIME = 200;
 
 	var state = STATE_STOPPED;
@@ -48,13 +45,13 @@ $('#page').live('pageinit', function() {
 			"penaltyAmount": penaltyTime
 		});
 
-		timer.setTime(timer.getTime() - penaltyTime*SECONDS_TO_MS);
+		timer.setTime(timer.getTime() - penaltyTime*utilities._constants.SECONDS_TO_MS);
 	});
 
 	var addPenalty = function(penalty) {
 		penalties.push(penalty);
 
-		var display = getDisplay(penalty.time);
+		var display = utilities.timerDisplay(penalty.time);
 		penaltiesContainer.append("<tr><td>"+display+"</td><td>"+penalty.penaltyAmount+"</td></tr>");
 		if (!penaltiesContainer.is(":visible")) {
 			penaltiesContainer.fadeIn(FADE_TIME);
@@ -100,28 +97,8 @@ $('#page').live('pageinit', function() {
 
 	var refreshTimerDisplay = function() {
 		currentRunTime = getRuntime();
-		timerDisplay.html(getDisplay(currentRunTime));
+		timerDisplay.html(utilities.timerDisplay(currentRunTime));
 	};
-
-	var getDisplay = function(time) {
-		var minutes = Math.floor(time*MS_TO_MINUTES);
-		var seconds = Math.floor((time - minutes*MINUTES_TO_MS) / 1000);
-		var ms = time - minutes*MINUTES_TO_MS - seconds*SECONDS_TO_MS;
-
-		var minutesDisplay = minutes < 10 ? "0"+String(minutes) : String(minutes);
-		var secondsDisplay = seconds < 10 ? "0"+String(seconds) : String(seconds);
-
-		var msDisplay;
-		if (ms < 10) {
-			msDisplay = "00"+String(ms);
-		} else if (ms < 100) {
-			msDisplay = "0"+String(ms);
-		} else {
-			msDisplay = String(ms);
-		}
-
-		return minutesDisplay+":"+secondsDisplay+"."+msDisplay;
-	}
 
 	var promptSave = function() {
 		var player = utilities.player;
